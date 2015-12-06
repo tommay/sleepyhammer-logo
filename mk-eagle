@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -e
+
+# Add or update logos in an Eagle library.
+
+lib="$1"
+
+./mk-eagle.rb "$lib" SLEEPYHAMMER >1.xml && mv 1.xml "$lib"
+./mk-eagle.rb "$lib" SLEEPYHAMMER_CU 16 >1.xml && mv 1.xml "$lib"
+./mk-eagle.rb "$lib" SLEEPYHAMMER_SMT 1 2.3 >1.xml && mv 1.xml "$lib"

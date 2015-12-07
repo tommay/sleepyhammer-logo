@@ -77,21 +77,30 @@ EYELASH_ANGLE = 98.0
 doc = File.open(library) {|f| Nokogiri::XML(f)}
 
 package = doc.css("package[name='#{package_name}']").first
+
 if package
   package.children.each do |child|
     child.remove
   end
+  package << Nokogiri::XML::Text.new("\n", doc)
 else
   package = Nokogiri::XML::Node.new("package", doc).tap do |package|
     package["name"] = package_name
-    package["description"] = "SleepyHammer logo"
   end
 
-  doc.css("packages").first << package
-  doc.css("packages").first << Nokogiri::XML::Text.new("\n", doc)
-end
+  package << Nokogiri::XML::Text.new("\n", doc)
 
-package << Nokogiri::XML::Text.new("\n", doc)
+  package << Nokogiri::XML::Node.new("description", doc).tap do |desc|
+    desc << Nokogiri::XML::Text.new("SleepyHammer logo", doc)
+  end
+
+  package << Nokogiri::XML::Text.new("\n", doc)
+
+  doc.css("packages").first.tap do |packages|
+    packages << package
+    packages << Nokogiri::XML::Text.new("\n", doc)
+  end
+end
 
 # Eyelid:
 
